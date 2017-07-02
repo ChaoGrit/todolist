@@ -1,4 +1,6 @@
 # todolist
 a todo list by vue
 
-just for test
+npm install
+
+npm start
