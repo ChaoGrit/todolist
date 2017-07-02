@@ -1,31 +1,37 @@
 <template>
-  <div id="todo-list">
-    <section>
-      <input class="todo-input" @keyup.enter="addTodo" v-model="whattodo" autofocus placeholder="what you want to do?">
-      <span class="btn-group">
-        <a v-for="item in btnGroup" :class="{active: select == item.status}" class="btn" href="javascript:;" @click="changeStatus(item)">{{item.title}}</a>
-      </span>
-      <a @click="removeDone" class="btn-delete" href="javascript:;">删除已完成</a>
-    </section>
-    <section>
-      <div><strong>{{remaining}}</strong><span class="unit">{{ remaining | pluralize }}</span>left</div>
-    </section>
-    <section>
-      <ul class="todo-list">
-        <li v-for="item in filterList" :class="{editing:item == editItem}">
-        <div class="view">
-          <input type="checkbox" v-model="item.hasDone">
-          <label :class={finished:item.hasDone} @dblclick="editTodo(item)">{{item.text}}</label>
-          <a href="javascript:;" @click="removeItem(item)">删除</a>
+  <div>
+    <div id="todo-list" class="todo-list-wrap">
+      <section class="input-section">
+        <input class="todo-input" @keyup.enter="addTodo" v-model="whattodo" autofocus placeholder="what you want to do?">
+        <a @click="addTodo" class="btn-add" href="javascript:;">新增</a>
+        <a @click="removeDone" class="btn-delete" href="javascript:;">删除已完成</a>
+      </section>
+      <section class="button-section">
+        <div class="btn-group">
+          <a v-for="item in btnGroup" :class="{active: select == item.status}" class="btn" href="javascript:;" @click="changeStatus(item)">{{item.title}}</a>
+          <span class="left-counter"><strong>{{remaining}}</strong><span class="unit">{{ remaining | pluralize }}</span>left</span>
         </div>
-        <input class="edit" type="text" v-model="item.text" v-autofocus @blur="doneEdit(item)" @keyup.enter="doneEdit(item)" @keyup.esc="cancelEdit(item)"/>
-        </li>
-      </ul>
-    </section>
+      </section>
+      <section>
+        <ul class="todo-list">
+          <li v-for="item in filterList" :class="{editing:item == editItem}">
+          <div class="view">
+            <input type="checkbox" v-model="item.hasDone">
+            <label :class={finished:item.hasDone} @dblclick="editTodo(item)">{{item.text}}</label>
+            <a href="javascript:;" @click="removeItem(item)">删除</a>
+          </div>
+          <input class="edit" type="text" v-model="item.text" v-autofocus @blur="doneEdit(item)" @keyup.enter="doneEdit(item)" @keyup.esc="cancelEdit(item)"/>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <template><pagination :init-current="1" :totalPage="20"></pagination></template>
   </div>
+  
 </template>
 
 <script>
+  import pagination from '../components/page'
   var ListStorage = 'vue-todo-list';
   //Html5 本地缓存
   var todoStorage = {
@@ -59,6 +65,9 @@
   }
   export default {
     name: 'todolist',
+    components:{
+      pagination
+    },
     data () {
       return {
         todolist: todoStorage.fetch(),
@@ -170,14 +179,34 @@
 a{
   text-decoration: none;
 }
+.input-section,
+.button-section{
+  margin: 0 auto;
+  width: 400px;
+  text-align: left;
+}
+.todo-list-wrap{
+  margin: 0 auto;
+  width: 600px;
+}
+.todo-list{
+  text-align: left;
+}
+.todo-list>li{
+  margin-bottom: 10px;
+}
 .todo-input{
   padding: 5px;
+  width: 196px;
 }
 .btn-group{
-  display: inline-block;
-  font-size: 0;
+  margin-top: 10px;
+}
+.left-counter{
+  margin-left: 10px;
 }
 .btn{
+  display: inline-block;
   padding: 5px 10px;
   color: #333;
   font-size: 12px;
@@ -190,13 +219,21 @@ a{
   opacity: 0.8;
 }
 .btn-delete{
-  margin-left: 20px;
   padding: 5px 10px;
   color: #fff;
   font-size: 12px;
   background-color: #d9534f;
   border-radius: 2px;
   border: 1px solid #d9534f;
+}
+.btn-add{
+  margin-left: 20px;
+  padding: 5px 10px;
+  color: #fff;
+  font-size: 12px;
+  background-color: #33bbd0;
+  border-radius: 2px;
+  border: 1px solid #33bbd0;
 }
 .finished{
   text-decoration: line-through;
@@ -226,5 +263,13 @@ a{
 .unit{
   margin-left: 5px;
   margin-right: 5px;
+}
+.view>label{
+  display: inline-block;
+  max-width: 450px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
